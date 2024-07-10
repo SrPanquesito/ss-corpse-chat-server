@@ -1,11 +1,13 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const initializeSQLConnection = require('#database/mysql.init');
 const {corsOptions} = require('#middleware/cors.middleware');
 const authRouter = require('#routes/auth.router');
 const feedRouter = require('#routes/feed.router');
+const errorHandler = require('#utils/errorHandler');
 const app = express();
 
 // Environment setup
@@ -13,6 +15,7 @@ const PORT = process.env.PORT || 3000;
 
 // Parse incoming requests as application/json
 app.use(bodyParser.json());
+app.use('/images', express.static(path.join(__dirname, 'assets/images')));
 
 // Cross-Origin Request Sharing (CORS)
 app.use(cors(corsOptions));
@@ -23,6 +26,9 @@ app.use('/api/feed', feedRouter);
 app.get('/', (req, res) => {
     res.send('Hello World');
 });
+
+// Error handling
+app.use(errorHandler);
 
 // Start server
 app.listen(PORT, () => {

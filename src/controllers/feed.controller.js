@@ -19,7 +19,7 @@ const getPosts = (req, res, next) => {
 };
 
 const createPost = async (req, res, next) => {
-    if (errorsOnValidation(req, res)) return;
+    if (errorsOnValidation(req, res, next)) return;
 
     const title = req.body.title;
     const content = req.body.content;
@@ -37,7 +37,8 @@ const createPost = async (req, res, next) => {
             post: post.toJSON()
         });
     } catch (error) {
-        console.log('Error saving post!', error);
+        if (error.statusCode) { error.statusCode = 500 };
+        next(error);
     }
 };
 
