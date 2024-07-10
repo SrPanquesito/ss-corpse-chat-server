@@ -15,6 +15,8 @@
   "keywords": [],
   "license": "ISC",
   "imports": {
+    "#assets/*": "./assets/*.js",
+    "#images/*": "./assets/images/*.js",
     "#config/*": "./src/config/*.js",
     "#controllers/*": "./src/controllers/*.js",
     "#database/*": "./src/database/*.js",

@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const initializeSQLConnection = require('#database/mysql.init');
 const {corsOptions} = require('#middleware/cors.middleware');
 const authRouter = require('#routes/auth.router');
-const postRouter = require('#routes/post.router');
+const feedRouter = require('#routes/feed.router');
 const app = express();
 
 // Environment setup
@@ -19,7 +19,7 @@ app.use(cors(corsOptions));
 
 // Routes
 app.use('/api/auth', authRouter);
-app.use('/api/feed', postRouter);
+app.use('/api/feed', feedRouter);
 app.get('/', (req, res) => {
     res.send('Hello World');
 });
