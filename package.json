@@ -15,10 +15,15 @@
   "keywords": [],
   "license": "ISC",
   "imports": {
+    "#config/*": "./src/config/*.js",
     "#controllers/*": "./src/controllers/*.js",
-    "#routes/*": "./src/routes/*.js",
+    "#database/*": "./src/database/*.js",
     "#models/*": "./src/database/models/*.js",
-    "#validators/*": "./src/middleware/validators/*.js"
+    "#middleware/*": "./src/middleware/*.js",
+    "#routes/*": "./src/routes/*.js",
+    "#validators/*": "./src/routes/validators/*.js",
+    "#utils/*": "./src/utils/*.js",
+    "#views/*": "./src/views/*.js"
   },
   "main": "index.js",
   "engines": {
@@ -32,18 +37,14 @@
   "dependencies": {
     "bcrypt": "5.1.1",
     "body-parser": "1.20.2",
-    "cookie-parser": "1.4.6",
     "cors": "2.8.5",
     "dotenv": "16.4.4",
     "express": "4.18.2",
     "express-validator": "7.1.0",
-    "form-data": "4.0.0",
-    "formidable": "3.5.1",
     "jsonwebtoken": "9.0.2",
-    "mysql": "2.18.1",
+    "multer": "1.4.5-lts.1",
     "mysql2": "3.10.2",
     "nodemon": "3.0.3",
-    "sequelize": "6.37.3",
-    "validator": "13.11.0"
+    "sequelize": "6.37.3"
   }
 }
