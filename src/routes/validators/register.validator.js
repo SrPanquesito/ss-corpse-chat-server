@@ -5,4 +5,4 @@ const registerValidator = [
     body('content').trim().isLength({min: 5})
 ];
 
-module.exports = registerValidator;
+module.exports = registerValidator; 

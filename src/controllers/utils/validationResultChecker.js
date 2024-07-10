@@ -1,14 +1,15 @@
 const { validationResult } = require('express-validator');
 
-const validationResultChecker = (req, res) => {
-    if (!validationResult(req).isEmpty()) {
-        const message = 'Validation failed. Request data is incorrect.';
+const errorsOnValidation = (req, res) => {
+    const errors = !validationResult(req).isEmpty();
+
+    if (errors) {
         res.status(422).json({
-            message,
+            message: 'Validation failed. Request data is incorrect.',
             errors: validationResult(req).mapped()
         });
-        throw new Error(message);
     }
+    return errors
 };
 
-module.exports = validationResultChecker;
+module.exports = {errorsOnValidation};

@@ -1,4 +1,5 @@
-const validationResultChecker = require('./utils/validationResultChecker');
+const {errorsOnValidation} = require('./utils/validationResultChecker');
+const Posts = require('#models/posts.model');
 
 const getPosts = (req, res, next) => {
     console.log('Feed controller working');
@@ -17,17 +18,27 @@ const getPosts = (req, res, next) => {
     });
 };
 
-const createPost = (req, res, next) => {
-    validationResultChecker(req, res);
+const createPost = async (req, res, next) => {
+    if (errorsOnValidation(req, res)) return;
+
     const title = req.body.title;
     const content = req.body.content;
-
-    console.log('Feed controller working');
-    // Create post in db
-    res.status(201).json({
-      message: 'Post created successfully!',
-      post: { id: new Date().toISOString(), title: title, content: content, creator: { name: 'Luis' }, createdAt: new Date() }
+    const post = new Posts({
+        title: title,
+        content: content,
+        imageUrl: 'images/maximiliano.png'
     });
+
+    try {
+        // Create post in db
+        await post.save();
+        res.status(201).json({
+            message: 'Post created successfully!',
+            post: post.toJSON()
+        });
+    } catch (error) {
+        console.log('Error saving post!', error);
+    }
 };
 
 module.exports = {
