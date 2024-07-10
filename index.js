@@ -8,6 +8,7 @@ const {corsOptions} = require('#middleware/cors.middleware');
 const authRouter = require('#routes/auth.router');
 const feedRouter = require('#routes/feed.router');
 const errorHandler = require('#utils/errorHandler');
+const multerConfiguration = require('#config/multer.configuration');
 const app = express();
 
 // Environment setup
@@ -15,6 +16,7 @@ const PORT = process.env.PORT || 3000;
 
 // Parse incoming requests as application/json
 app.use(bodyParser.json());
+app.use(multerConfiguration);
 app.use('/images', express.static(path.join(__dirname, 'assets/images')));
 
 // Cross-Origin Request Sharing (CORS)

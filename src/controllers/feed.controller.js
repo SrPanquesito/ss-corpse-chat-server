@@ -32,8 +32,8 @@ const getPosts = async (req, res, next) => {
         }
 
         res.status(200).json({
-            message: 'Fetched all posts successfully.',
-            posts: posts.toJSON()
+            message: 'Fetched all posts successfully. 🟢 😃',
+            posts
         });
     } catch (error) {
         if (error.statusCode) { error.statusCode = 500 };
@@ -43,13 +43,19 @@ const getPosts = async (req, res, next) => {
 
 const createPost = async (req, res, next) => {
     if (errorsOnValidation(req, res, next)) return;
+    if (!req.file) {
+        const error = new Error('No image provided.');
+        error.statusCode = 422;
+        throw error;
+    }
 
     const title = req.body.title;
     const content = req.body.content;
+    const imageUrl = req.file.path;
     const post = new Posts({
         title: title,
         content: content,
-        imageUrl: 'images/maximiliano.png'
+        imageUrl
     });
 
     try {
