@@ -23,9 +23,13 @@ const Users = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    image: {
-      type: DataTypes.BLOB,
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
+    profilePictureUrl: {
+      type: DataTypes.STRING
+    }
   }
 );
 

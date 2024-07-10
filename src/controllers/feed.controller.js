@@ -1,4 +1,3 @@
-const { Op } = require("sequelize");
 const {errorsOnValidation} = require('./utils/validationResultChecker');
 const Posts = require('#models/posts.model');
 const {clearImage} = require('#utils/image.util');

@@ -23,10 +23,6 @@ const Posts = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     }
-    // creator or userId ???
-    // image: {
-    //   type: DataTypes.BLOB,
-    // },
   }
 );
 

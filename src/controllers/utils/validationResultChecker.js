@@ -6,7 +6,7 @@ const errorsOnValidation = (req, res, next) => {
     if (errors) {
         const error = new Error('Validation failed. Request data is incorrect.');
         error.statusCode = 422;
-        error.data = validationResult(req).mapped();
+        error.data = validationResult(req).array();
         next(error);
     }
     return errors
