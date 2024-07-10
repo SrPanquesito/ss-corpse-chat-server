@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const {errorsOnValidation} = require('./utils/validationResultChecker');
 const Posts = require('#models/posts.model');
 const {clearImage} = require('#utils/image.util');
@@ -24,16 +25,27 @@ const getPost = async (req, res, next) => {
 
 const getPosts = async (req, res, next) => {
     try {
-        const posts = await Posts.findAll();
-        if (!posts) {
-            const error = new Error('Posts not found!');
-            error.statusCode = 404;
-            throw error;
+        const currentPage = req.query.page || 1;
+        const perPage = req.query.offset || 3;
+        const totalItems = await Posts.count();
+        let posts = [];
+
+        if (totalItems > 0) {
+            posts = await Posts.findAll({
+                offset: (currentPage - 1) * perPage,
+                limit: perPage
+            });
+            if (!posts) {
+                const error = new Error('Posts not found!');
+                error.statusCode = 404;
+                throw error;
+            }
         }
 
         res.status(200).json({
-            message: 'Fetched all posts successfully. 🟢 😃',
-            posts
+            message: 'Fetched posts successfully 😃/',
+            posts,
+            totalItems
         });
     } catch (error) {
         if (error.statusCode) { error.statusCode = 500 };
@@ -106,9 +118,32 @@ const updatePost = async (req, res, next) => {
     }
 };
 
+const deletePost = async (req, res, next) => {
+    try {
+        const postId = req.params.postId;
+
+        // Get post from db
+        const post = await Posts.findByPk(postId);
+        if (!post) throw new Error('Post not found!');
+        clearImage(post.imageUrl);
+
+        // Delete record from db
+        await post.destroy();
+
+        res.status(201).json({
+            message: 'Post deleted successfully!',
+            post: post.toJSON()
+        });
+    } catch (error) {
+        if (error.statusCode) { error.statusCode = 500 };
+        next(error);
+    }
+};
+
 module.exports = {
     getPost,
     getPosts,
     createPost,
-    updatePost
+    updatePost,
+    deletePost
 };
