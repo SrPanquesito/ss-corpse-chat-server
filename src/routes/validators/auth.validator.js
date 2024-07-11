@@ -18,6 +18,11 @@ const registerValidator = [
     body('username').trim().not().isEmpty(),
 ];
 
+const updateStatusValidator = [
+    body('status').trim().not().isEmpty()
+];
+
 module.exports = {
-    registerValidator
+    registerValidator,
+    updateStatusValidator
 }; 

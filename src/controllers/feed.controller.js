@@ -17,7 +17,7 @@ const getPost = async (req, res, next) => {
             post: post.toJSON()
         });
     } catch (error) {
-        if (error.statusCode) { error.statusCode = 500 };
+        if (!error.statusCode) { error.statusCode = 500 };
         next(error);
     }
 };
@@ -47,7 +47,7 @@ const getPosts = async (req, res, next) => {
             totalItems
         });
     } catch (error) {
-        if (error.statusCode) { error.statusCode = 500 };
+        if (!error.statusCode) { error.statusCode = 500 };
         next(error);
     }
 };
@@ -68,7 +68,8 @@ const createPost = async (req, res, next) => {
         const post = new Posts({
             title: title,
             content: content,
-            imageUrl
+            imageUrl,
+            userId: req.userId
         });
 
         // Create post in db
@@ -78,7 +79,7 @@ const createPost = async (req, res, next) => {
             post: post.toJSON()
         });
     } catch (error) {
-        if (error.statusCode) { error.statusCode = 500 };
+        if (!error.statusCode) { error.statusCode = 500 };
         next(error);
     }
 };
@@ -98,7 +99,11 @@ const updatePost = async (req, res, next) => {
         // Get post from db
         const post = await Posts.findByPk(postId);
         if (!post) throw new Error('Post not found!');
-
+        if (post.userId !== req.userId) {
+            const error = new Error('Not authorized!');
+            error.statusCode = 403;
+            throw error;
+        }
         if (imageUrl !== post.imageUrl) clearImage(post.imageUrl);
         post.title = title;
         post.content = content;
@@ -112,7 +117,7 @@ const updatePost = async (req, res, next) => {
             post: post.toJSON()
         });
     } catch (error) {
-        if (error.statusCode) { error.statusCode = 500 };
+        if (!error.statusCode) { error.statusCode = 500 };
         next(error);
     }
 };
@@ -124,6 +129,11 @@ const deletePost = async (req, res, next) => {
         // Get post from db
         const post = await Posts.findByPk(postId);
         if (!post) throw new Error('Post not found!');
+        if (post.userId !== req.userId) {
+            const error = new Error('Not authorized!');
+            error.statusCode = 403;
+            throw error;
+        }
         clearImage(post.imageUrl);
 
         // Delete record from db
@@ -134,7 +144,7 @@ const deletePost = async (req, res, next) => {
             post: post.toJSON()
         });
     } catch (error) {
-        if (error.statusCode) { error.statusCode = 500 };
+        if (!error.statusCode) { error.statusCode = 500 };
         next(error);
     }
 };

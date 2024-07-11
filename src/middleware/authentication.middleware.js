@@ -23,6 +23,7 @@ const isAuthenticated = (req, res, next) => {
         throw error;
     }
     req.userId = decodedToken.userId;
+    next();
 };
 
 module.exports = {isAuthenticated}

@@ -21,19 +21,18 @@ const register = async (req, res, next) => {
             profilePictureUrl
         });
 
-        const userJson = user.toJSON();
         const token = jwt.sign({
-            userId: userJson.id,
-            email: userJson.email
+            userId: user.id,
+            email: user.email
         }, process.env.JWT_SECRET, { expiresIn: '6h' });
 
         res.status(201).json({
             message: 'User created successfully!',
             token,
-            userId: userJson.id
+            userId: user.id
         });
     } catch (error) {
-        if (error.statusCode) { error.statusCode = 500 };
+        if (!error.statusCode) { error.statusCode = 500 };
         next(error);
     }
 };
@@ -55,24 +54,60 @@ const login = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        const userJson = user.toJSON();
         const token = jwt.sign({
-            userId: userJson.id,
-            email: userJson.email
+            userId: user.id,
+            email: user.email
         }, process.env.JWT_SECRET, { expiresIn: '6h' });
 
         res.status(200).json({
             message: 'User logged in successfully!',
             token,
-            userId: userJson.id
+            userId: user.id
         });
     } catch (error) {
-        if (error.statusCode) { error.statusCode = 500 };
+        if (!error.statusCode) { error.statusCode = 500 };
+        next(error);
+    }
+};
+
+const getUserStatus = async (req, res, next) => {
+    try {
+        const user = await Users.findByPk(req.userId);
+        if (!user) {
+            const error = new Error('User was not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        res.status(200).json({status: user.status});
+    } catch (error) {
+        if (!error.statusCode) { error.statusCode = 500 };
+        next(error);
+    }
+};
+
+const updateUserStatus = async (req, res, next) => {
+    try {
+        const newStatus = req.body.status;
+        const user = await Users.findByPk(req.userId);
+        if (!user) {
+            const error = new Error('User was not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+        user.status = newStatus;
+        await user.save();
+
+        res.status(200).json({status: user.status});
+    } catch (error) {
+        if (!error.statusCode) { error.statusCode = 500 };
         next(error);
     }
 };
 
 module.exports = {
     register,
-    login
+    login,
+    getUserStatus,
+    updateUserStatus
 };
