@@ -23,7 +23,10 @@ const register = async (req, res, next) => {
 
         const token = jwt.sign({
             userId: user.id,
-            email: user.email
+            email: user.email,
+            username: user.username,
+            profilePictureUrl: user.profilePictureUrl,
+            status: user.status
         }, process.env.JWT_SECRET, { expiresIn: '6h' });
 
         res.status(201).json({
@@ -56,7 +59,10 @@ const login = async (req, res, next) => {
         }
         const token = jwt.sign({
             userId: user.id,
-            email: user.email
+            email: user.email,
+            username: user.username,
+            profilePictureUrl: user.profilePictureUrl,
+            status: user.status
         }, process.env.JWT_SECRET, { expiresIn: '6h' });
 
         res.status(200).json({
