@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const initializeSQLConnection = require('#database/mysql.init');
 const {corsOptions} = require('#middleware/cors.middleware');
 const authRouter = require('#routes/auth.router');
+const chatRouter = require('#routes/chat.router');
 const feedRouter = require('#routes/feed.router');
 const errorHandler = require('#utils/errorHandler');
 const multerConfiguration = require('#config/multer.configuration');
@@ -24,6 +25,7 @@ app.use(cors(corsOptions));
 
 // Routes
 app.use('/api/auth', authRouter);
+app.use('/api/chat', chatRouter);
 app.use('/api/feed', feedRouter);
 app.get('/', (req, res) => {
     res.send('Hello World');
