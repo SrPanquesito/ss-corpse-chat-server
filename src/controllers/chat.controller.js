@@ -2,6 +2,7 @@ const Users = require('#models/users.model');
 
 const getAllUsersRaw = async (req, res, next) => {
     try {
+        const loggedUserId = req.userId;
         const users = await Users.findAll();
         if (!users) {
             const error = new Error('Failed to retrieve all users from DB.');
@@ -9,7 +10,7 @@ const getAllUsersRaw = async (req, res, next) => {
             throw error;
         }
 
-        const mappedUsers = users.map(user => {
+        let mappedUsers = users.map(user => {
             const userJson = user.toJSON();
             return {
                 id: userJson.id,
@@ -19,6 +20,9 @@ const getAllUsersRaw = async (req, res, next) => {
                 status: userJson.status
             };
         });
+
+        // Don't show the logged in user in the contacts
+        mappedUsers = mappedUsers.filter(user => user.id !== loggedUserId);
 
         res.status(200).json({
             message: 'Retrieved all users successfully!',
