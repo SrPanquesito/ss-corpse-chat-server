@@ -1,4 +1,5 @@
 const Users = require('#models/users.model');
+const Messages = require('#models/messages.model');
 
 const getAllUsersRaw = async (req, res, next) => {
     try {
@@ -34,6 +35,30 @@ const getAllUsersRaw = async (req, res, next) => {
     }
 };
 
+const createMessage = async(req, res, next) => {
+    try {
+        const { sender, receiver, message } = req.body;
+
+        const createdMessage = new Messages({
+            text: message,
+            imageUrl: '',
+            senderId: sender.id,
+            receiverId: receiver.id,
+        });
+
+        await createdMessage.save();
+
+        res.status(201).json({
+            message: 'Created message successfully!',
+            id: createdMessage.toJSON().id
+        });
+    } catch (error) {
+        if (!error.statusCode) { error.statusCode = 500 };
+        next(error);
+    }
+};
+
 module.exports = {
-    getAllUsersRaw
+    getAllUsersRaw,
+    createMessage
 };
