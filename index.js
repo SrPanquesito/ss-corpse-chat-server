@@ -9,8 +9,7 @@ const authRouter = require('#routes/auth.router');
 const chatRouter = require('#routes/chat.router');
 const feedRouter = require('#routes/feed.router');
 const errorHandler = require('#utils/errorHandler');
-const { multerDiskSingleImage, multerMemorySingleFile } = require('#config/multer.configuration');
-const { fileUploadStream } = require('./src/clients/aws.s3.client');
+const { multerMemorySingleFile } = require('#config/multer.configuration');
 const app = express();
 
 // Environment setup
@@ -21,12 +20,9 @@ app.use(cors(corsOptions));
 
 // Parse incoming requests as application/json
 app.use(bodyParser.json());
-// app.use(multerDiskSingleImage);
 app.use(multerMemorySingleFile);
-// app.use('/images', express.static(path.join(__dirname, 'assets/images')));
 
 // Routes
-app.post('/api/upload', fileUploadStream)
 app.use('/api/auth', authRouter);
 app.use('/api/chat', chatRouter);
 app.use('/api/feed', feedRouter);

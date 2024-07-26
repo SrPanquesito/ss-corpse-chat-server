@@ -1,7 +1,8 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const {errorsOnValidation} = require('./utils/validationResultChecker');
+const {errorsOnValidation} = require('#controllersUtils/validationResultChecker');
 const Users = require('#models/users.model');
+const { uploadFileToS3 } = require('#clients/aws.s3.client');
 
 const register = async (req, res, next) => {
     if (errorsOnValidation(req, res, next)) return;
@@ -11,15 +12,64 @@ const register = async (req, res, next) => {
         const username = req.body.username;
         const password = req.body.password;
         const hashedPassword = await bcrypt.hash(password, 12);
-        const profilePictureUrl = req.file ? req.file.path : null;
-    
+        const profilePicture = req.file || null;
+        const s3File = profilePicture ? await uploadFileToS3(profilePicture) : null;
         const user = await Users.create({
             email,
             username,
             password: hashedPassword,
             status: 'ACTIVE',
-            profilePictureUrl
+            profilePictureUrl: s3File?.Location || ""
         });
+
+        const token = jwt.sign({
+            userId: user.id,
+            email: user.email,
+            username: user.username,
+            profilePictureUrl: user.profilePictureUrl,
+            status: user.status
+        }, process.env.JWT_SECRET, { expiresIn: '6h' });
+
+        res.status(201).json({
+            message: 'User created successfully!',
+            token,
+            userId: user.id
+        });
+    } catch (error) {
+        if (!error.statusCode) { error.statusCode = 500 };
+        next(error);
+    }
+};
+
+// Can be used later for faster register process. Will need to poll the user profile picture in the UI.
+const registerAsyncUpload = async (req, res, next) => {
+    if (errorsOnValidation(req, res, next)) return;
+
+    try {
+        const email = req.body.email;
+        const username = req.body.username;
+        const password = req.body.password;
+        const hashedPassword = await bcrypt.hash(password, 12);
+        const profilePicture = req.file || null;
+        const user = await Users.create({
+            email,
+            username,
+            password: hashedPassword,
+            status: 'ACTIVE',
+            profilePictureUrl: ""
+        });
+
+        // Upload profile picture to S3 and update user profile picture URL
+        if (profilePicture) {
+            uploadFileToS3(profilePicture).then(async (s3File) => {
+                const updateUser = await Users.findByPk(user.id);
+                updateUser.profilePictureUrl = s3File?.Location || "";
+                await updateUser.save();
+            }).catch(error => {
+                if (!error.statusCode) { error.statusCode = 500 };
+                console.log("Upload file error. Could not update profilePictureUrl of new user: ", error);
+            });
+        }
 
         const token = jwt.sign({
             userId: user.id,
