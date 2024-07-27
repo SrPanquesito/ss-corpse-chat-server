@@ -72,5 +72,5 @@ Or where did I last leave the project?
 - [x] Posts table
 - [x] Login users
 - [x] Configure AWS S3, config bucket for public access and handle file uploading in parallel stream
-- [ ] Chat -> Create messages, imageUrl should point to s3 file url (TO-DO)
-- [ ] Register -> Profile picture upload should save in s3 and display remote image for the contact in chat layout (LAST WORKED)
+- [x] Register -> Profile picture upload should save in s3 and display remote image for the contact in chat layout
+- [ ] Chat -> Create messages, imageUrl should point to s3 file url, senderId and receiverId should point to contacts. Verify in DB (LAST WORKED)

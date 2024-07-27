@@ -1,5 +1,6 @@
 const Users = require('#models/users.model');
 const Messages = require('#models/messages.model');
+const { uploadFileToS3 } = require('#clients/aws.s3.client');
 
 const getAllUsersRaw = async (req, res, next) => {
     try {
@@ -38,12 +39,14 @@ const getAllUsersRaw = async (req, res, next) => {
 const createMessage = async(req, res, next) => {
     try {
         const { sender, receiver, message } = req.body;
+        const file = req.file || null;
+        const s3File = file ? await uploadFileToS3(file) : null;
 
         const createdMessage = new Messages({
             text: message,
-            imageUrl: '',
             senderId: sender.id,
             receiverId: receiver.id,
+            imageUrl: s3File?.Location || "",
         });
 
         await createdMessage.save();

@@ -11,11 +11,6 @@ const associateModels = () => {
     Messages.belongsTo(Users, {foreignKey: 'receiverId'});
     Users.hasMany(Messages, {foreignKey: 'senderId'});
     Users.hasMany(Messages, {foreignKey: 'receiverId'});
-
-    // Messages.belongsTo(Users, { as: 'sender', foreignKey: 'senderId' });
-    // Messages.belongsTo(Users, { as: 'receiver', foreignKey: 'receiverId' });
-    // Users.hasMany(Messages, { foreignKey: 'senderId', as: 'senderMsg' });
-    // Users.hasMany(Messages, { foreignKey: 'receiverId', as: 'receiverMsg' });
 };
 
 const initializeSQLConnection = async () => {
