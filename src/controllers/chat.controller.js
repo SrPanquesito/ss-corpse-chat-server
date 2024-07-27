@@ -27,8 +27,9 @@ const getAllUsersRaw = async (req, res, next) => {
         mappedUsers = mappedUsers.filter(user => user.id !== loggedUserId);
 
         res.status(200).json({
-            message: 'Retrieved all users successfully!',
-            contacts: mappedUsers
+            success: true,
+            errorMessage: null,
+            data: mappedUsers
         });
     } catch (error) {
         if (!error.statusCode) { error.statusCode = 500 };
@@ -52,8 +53,11 @@ const createMessage = async(req, res, next) => {
         await createdMessage.save();
 
         res.status(201).json({
-            message: 'Created message successfully!',
-            id: createdMessage.toJSON().id
+            success: true,
+            errorMessage: null,
+            data: {
+                id: createdMessage.toJSON().id
+            }
         });
     } catch (error) {
         if (!error.statusCode) { error.statusCode = 500 };

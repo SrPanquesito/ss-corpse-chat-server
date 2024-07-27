@@ -74,3 +74,15 @@ Or where did I last leave the project?
 - [x] Configure AWS S3, config bucket for public access and handle file uploading in parallel stream
 - [x] Register -> Profile picture upload should save in s3 and display remote image for the contact in chat layout
 - [ ] Chat -> Create messages, imageUrl should point to s3 file url, senderId and receiverId should point to contacts. Verify in DB (LAST WORKED)
+
+
+Notes:
+
+Responses should follow the same structure:
+{
+  success: Boolean,
+  errorMessage: String || null,
+  data: {},
+
+  message: (Optional field for BE debugging)
+}

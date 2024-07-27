@@ -4,7 +4,8 @@ const errorHandler = (error, req, res, next) => {
     const message = error.message;
     const data = error.data;
     res.status(status).json({
-        message: message,
+        success: false,
+        errorMessage: message,
         data: data
     });
 };
