@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const Users = require('#models/users.model');
 const Messages = require('#models/messages.model');
 const { uploadFileToS3 } = require('#clients/aws.s3.client');
@@ -56,8 +57,45 @@ const createMessage = async(req, res, next) => {
             success: true,
             errorMessage: null,
             data: {
-                id: createdMessage.toJSON().id
+                message: createdMessage.toJSON()
             }
+        });
+    } catch (error) {
+        if (!error.statusCode) { error.statusCode = 500 };
+        next(error);
+    }
+};
+
+const getAllMessagesByContactId = async (req, res, next) => {
+    try {
+        const loggedUserId = req.userId;
+        const contactId = req.params.contactId;
+
+        const messages = await Messages.findAll({ 
+            where: {
+                [Op.or]: [
+                    { senderId: loggedUserId, receiverId: contactId },
+                    { senderId: contactId, receiverId: loggedUserId }
+                ],
+            },
+            order: [
+                ['createdAt', 'DESC'],
+            ]
+        });
+        if (!messages) {
+            const error = new Error('Failed to retrieve messages from DB.');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        let mappedData = messages.map(msg => {
+            return msg.toJSON();
+        });
+
+        res.status(200).json({
+            success: true,
+            errorMessage: null,
+            data: mappedData
         });
     } catch (error) {
         if (!error.statusCode) { error.statusCode = 500 };
@@ -67,5 +105,6 @@ const createMessage = async(req, res, next) => {
 
 module.exports = {
     getAllUsersRaw,
-    createMessage
+    createMessage,
+    getAllMessagesByContactId
 };

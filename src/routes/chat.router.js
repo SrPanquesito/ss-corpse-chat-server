@@ -7,4 +7,6 @@ router.get('/contacts', isAuthenticated, ChatController.getAllUsersRaw);
 
 router.post('/send-message', isAuthenticated, ChatController.createMessage);
 
+router.get('/contact/:contactId/messages', isAuthenticated, ChatController.getAllMessagesByContactId);
+
 module.exports = router;
