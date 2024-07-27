@@ -31,9 +31,13 @@ const register = async (req, res, next) => {
         }, process.env.JWT_SECRET, { expiresIn: '6h' });
 
         res.status(201).json({
-            message: 'User created successfully!',
-            token,
-            userId: user.id
+            success: true,
+            errorMessage: null,
+            data: {
+                id: user.id,
+                email: user.email,
+                token
+            }
         });
     } catch (error) {
         if (!error.statusCode) { error.statusCode = 500 };
@@ -80,9 +84,13 @@ const registerAsyncUpload = async (req, res, next) => {
         }, process.env.JWT_SECRET, { expiresIn: '6h' });
 
         res.status(201).json({
-            message: 'User created successfully!',
-            token,
-            userId: user.id
+            success: true,
+            errorMessage: null,
+            data: {
+                id: user.id,
+                email: user.email,
+                token
+            }
         });
     } catch (error) {
         if (!error.statusCode) { error.statusCode = 500 };
@@ -116,9 +124,13 @@ const login = async (req, res, next) => {
         }, process.env.JWT_SECRET, { expiresIn: '6h' });
 
         res.status(200).json({
-            message: 'User logged in successfully!',
-            token,
-            userId: user.id
+            success: true,
+            errorMessage: null,
+            data: {
+                id: user.id,
+                email: user.email,
+                token
+            }
         });
     } catch (error) {
         if (!error.statusCode) { error.statusCode = 500 };
@@ -135,7 +147,13 @@ const getUserStatus = async (req, res, next) => {
             throw error;
         }
 
-        res.status(200).json({status: user.status});
+        res.status(200).json({
+            success: true,
+            errorMessage: null,
+            data: {
+                status: user.status
+            }
+        });
     } catch (error) {
         if (!error.statusCode) { error.statusCode = 500 };
         next(error);
@@ -154,7 +172,13 @@ const updateUserStatus = async (req, res, next) => {
         user.status = newStatus;
         await user.save();
 
-        res.status(200).json({status: user.status});
+        res.status(200).json({
+            success: true,
+            errorMessage: null,
+            data: {
+                status: user.status
+            }
+        });
     } catch (error) {
         if (!error.statusCode) { error.statusCode = 500 };
         next(error);
