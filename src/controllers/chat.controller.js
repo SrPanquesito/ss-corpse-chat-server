@@ -41,14 +41,19 @@ const getAllUsersRaw = async (req, res, next) => {
 const createMessage = async(req, res, next) => {
     try {
         const { sender, receiver, message } = req.body;
-        const file = req.file || null;
-        const s3File = file ? await uploadFileToS3(file) : null;
+        let imageUrl = req.body.imageUrl || "";
+
+        if (!imageUrl && req.file) {
+            const file = req.file;
+            const s3File = await uploadFileToS3(file);
+            imageUrl = s3File?.Location || "";
+        }
 
         const createdMessage = new Messages({
             text: message,
             senderId: sender.id,
             receiverId: receiver.id,
-            imageUrl: s3File?.Location || "",
+            imageUrl,
         });
 
         await createdMessage.save();
@@ -103,8 +108,28 @@ const getAllMessagesByContactId = async (req, res, next) => {
     }
 };
 
+const uploadSingleImageToS3 = async(req, res, next) => {
+    try {
+        const file = req.file || null;
+        const s3File = file ? await uploadFileToS3(file) : null;
+        const imageUrl = s3File?.Location || "";
+
+        res.status(201).json({
+            success: true,
+            errorMessage: null,
+            data: {
+                imageUrl
+            }
+        });
+    } catch (error) {
+        if (!error.statusCode) { error.statusCode = 500 };
+        next(error);
+    }
+};
+
 module.exports = {
     getAllUsersRaw,
     createMessage,
-    getAllMessagesByContactId
+    getAllMessagesByContactId,
+    uploadSingleImageToS3
 };

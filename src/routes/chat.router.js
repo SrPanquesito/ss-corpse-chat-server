@@ -9,4 +9,6 @@ router.post('/send-message', isAuthenticated, ChatController.createMessage);
 
 router.get('/contact/:contactId/messages', isAuthenticated, ChatController.getAllMessagesByContactId);
 
+router.post('/upload-single-image', isAuthenticated, ChatController.uploadSingleImageToS3);
+
 module.exports = router;
