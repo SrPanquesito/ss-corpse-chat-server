@@ -17,8 +17,10 @@
   "imports": {
     "#assets/*": "./assets/*.js",
     "#images/*": "./assets/images/*.js",
+    "#clients/*": "./src/clients/*.js",
     "#config/*": "./src/config/*.js",
     "#controllers/*": "./src/controllers/*.js",
+    "#controllers/utils/*": "./src/controllers/utils/*.js",
     "#database/*": "./src/database/*.js",
     "#models/*": "./src/database/models/*.js",
     "#middleware/*": "./src/middleware/*.js",
@@ -37,6 +39,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "3.617.0",
+    "@aws-sdk/lib-storage": "3.617.0",
     "bcrypt": "5.1.1",
     "body-parser": "1.20.2",
     "cors": "2.8.5",
