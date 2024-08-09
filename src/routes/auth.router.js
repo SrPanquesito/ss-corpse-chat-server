@@ -6,7 +6,7 @@ const {isAuthenticated} = require('#middleware/authentication.middleware');
 // Register new user account
 router.post('/register', registerValidator, AuthController.register);
 
-// Login user
+// Log in user
 router.post('/login', AuthController.login);
 
 // Get user status
