@@ -1,13 +1,11 @@
 require('dotenv').config();
 const express = require('express');
-const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const initializeSQLConnection = require('#database/mysql.init');
 const {corsOptions} = require('#middleware/cors.middleware');
 const authRouter = require('#routes/auth.router');
 const chatRouter = require('#routes/chat.router');
-const feedRouter = require('#routes/feed.router');
 const errorHandler = require('#utils/errorHandler');
 const { multerMemorySingleFile } = require('#config/multer.configuration');
 const app = express();
@@ -25,7 +23,6 @@ app.use(multerMemorySingleFile);
 // Routes
 app.use('/api/auth', authRouter);
 app.use('/api/chat', chatRouter);
-app.use('/api/feed', feedRouter);
 app.get('/', (req, res) => {
     res.send('Hello World');
 });
