@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const {errorsOnValidation} = require('#controllersUtils/validationResultChecker');
+const {errorsOnValidation} = require('#controllers/utils/validationResultChecker');
 const Users = require('#models/users.model');
 const { uploadFileToS3 } = require('#clients/aws.s3.client');
 

@@ -34,11 +34,9 @@ const uploadFileToS3 = async (file) => {
         })
 
         const data = await uploadParallel.done();
-        console.log("Upload completed!", { data });
         return data;
     } catch(error) {
         if (!error.statusCode) { error.statusCode = 500 };
-        console.log("Upload file error: ", error);
         throw error;
     }
 }

@@ -20,7 +20,7 @@
     "#clients/*": "./src/clients/*.js",
     "#config/*": "./src/config/*.js",
     "#controllers/*": "./src/controllers/*.js",
-    "#controllersUtils/*": "./src/controllers/utils/*.js",
+    "#controllers/utils/*": "./src/controllers/utils/*.js",
     "#database/*": "./src/database/*.js",
     "#models/*": "./src/database/models/*.js",
     "#middleware/*": "./src/middleware/*.js",
