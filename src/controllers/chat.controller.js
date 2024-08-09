@@ -6,7 +6,13 @@ const { uploadFileToS3 } = require('#clients/aws.s3.client');
 const getAllUsersRaw = async (req, res, next) => {
     try {
         const loggedUserId = req.userId;
-        const users = await Users.findAll();
+        const users = await Users.findAll({
+            where: {
+                id: {
+                    [Op.ne]: loggedUserId
+                }
+            }
+        });
         if (!users) {
             const error = new Error('Failed to retrieve all users from DB.');
             error.statusCode = 401;
@@ -24,8 +30,12 @@ const getAllUsersRaw = async (req, res, next) => {
             };
         });
 
-        // Don't show the logged in user in the contacts
-        mappedUsers = mappedUsers.filter(user => user.id !== loggedUserId);
+        for (let i = 0; i < mappedUsers.length; i++) {
+            const lastMessage = await getLastMessage(loggedUserId, mappedUsers[i].id);
+            if (lastMessage) {
+                mappedUsers[i].lastMessage = lastMessage.toJSON();
+            }
+        }
 
         res.status(200).json({
             success: true,
@@ -36,6 +46,20 @@ const getAllUsersRaw = async (req, res, next) => {
         if (!error.statusCode) { error.statusCode = 500 };
         next(error);
     }
+};
+
+const getLastMessage = async (userId, contactId) => {
+    return await Messages.findOne({
+        where: {
+            [Op.or]: [
+                { senderId: userId, receiverId: contactId },
+                { senderId: contactId, receiverId: userId }
+            ]
+        },
+        order: [
+            ['createdAt', 'DESC'],
+        ]
+    });
 };
 
 const createMessage = async(req, res, next) => {
@@ -76,6 +100,15 @@ const getAllMessagesByContactId = async (req, res, next) => {
         const loggedUserId = req.userId;
         const contactId = req.params.contactId;
 
+        await Messages.update(
+            { status: 'seen' },
+            { where: {
+                [Op.or]: [
+                    { senderId: loggedUserId, receiverId: contactId },
+                    { senderId: contactId, receiverId: loggedUserId }
+                ],
+            }}
+        );
         const messages = await Messages.findAll({ 
             where: {
                 [Op.or]: [
