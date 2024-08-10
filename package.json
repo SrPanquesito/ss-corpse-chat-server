@@ -37,14 +37,14 @@
   "scripts": {
     "start": "nodemon index.js",
     "test": "jest",
-    "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
-    "prettier": "prettier --write --ignore-unknown",
+    "config:lint": "eslint . --report-unused-disable-directives --max-warnings 0",
+    "config:prettier": "prettier --write --ignore-unknown",
     "prepare": "husky"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "npm run lint",
-      "npm run prettier"
+      "npm run config:lint",
+      "npm run config:prettier"
     ]
   },
   "dependencies": {

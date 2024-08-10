@@ -21,7 +21,7 @@ module.exports = [
   },
   // Jest environment
   {
-    files: ["**/*.test.js", "**/*.spec.js"],
+    files: ["**/*.test.js", "**/*.spec.js", "**/*.mock.js"],
     languageOptions: {
       globals: {
         ...globals.jest,
