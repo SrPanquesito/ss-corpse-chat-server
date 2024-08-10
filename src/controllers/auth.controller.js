@@ -46,6 +46,7 @@ const register = async (req, res, next) => {
 };
 
 // Can be used later for faster register process. Will need to poll the user profile picture in the UI.
+// eslint-disable-next-line no-unused-vars
 const registerAsyncUpload = async (req, res, next) => {
     if (errorsOnValidation(req, res, next)) return;
 
