@@ -6,7 +6,7 @@ const registerValidator = [
         .trim()
         .isEmail()
         .withMessage('Please enter a valid email.')
-        .custom(async (email, {req}) => {
+        .custom(async (email) => {
             return await Users.findOne({ where: { email } }).then(user => {
                 if (user) {
                     return Promise.reject('E-mail address already in use.');
