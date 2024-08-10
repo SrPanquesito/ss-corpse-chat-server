@@ -36,9 +36,14 @@
   },
   "scripts": {
     "start": "nodemon index.js",
-    "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint . --report-unused-disable-directives --max-warnings 0 --fix",
+      "prettier --write --ignore-unknown"
+    ]
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.617.0",
@@ -59,7 +64,10 @@
   "devDependencies": {
     "@eslint/js": "9.9.0",
     "eslint": "9.9.0",
+    "eslint-config-prettier": "9.1.0",
     "globals": "15.9.0",
-    "husky": "9.1.4"
+    "husky": "9.1.4",
+    "lint-staged": "15.2.8",
+    "prettier": "3.3.3"
   }
 }
