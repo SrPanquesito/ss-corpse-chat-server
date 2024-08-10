@@ -6,7 +6,7 @@ module.exports = {
   restoreMocks: true,
   // Coverage configuration
   collectCoverage: true,
-  collectCoverageFrom: ["src/**/*.{js}", "!index.js", "!src/**/*.mock.{js}"],
+  collectCoverageFrom: ["./src/**"],
   coverageReporters: ["json", "text", "html"],
   coverageThreshold: {
     global: {
