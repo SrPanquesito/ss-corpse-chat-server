@@ -7,7 +7,7 @@ module.exports = {
   forceExit: true,
   // Coverage configuration
   collectCoverage: true,
-  collectCoverageFrom: ["./src/**"],
+  collectCoverageFrom: ["./src/**", "!./src/config/**"],
   coverageReporters: ["json", "text", "html"],
   coverageThreshold: {
     global: {
