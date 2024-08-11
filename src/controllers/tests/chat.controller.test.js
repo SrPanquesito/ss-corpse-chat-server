@@ -1,7 +1,6 @@
 const { Op } = require("sequelize");
 const Users = require("#models/users.model");
 const Messages = require("#models/messages.model");
-// let { Upload } = require('@aws-sdk/lib-storage');
 const {
   getAllUsersRaw,
   createMessage,
@@ -40,11 +39,6 @@ describe("src/controllers/chat.controller.js", () => {
     Messages.findOne = mockMessagesFindOne.mockResolvedValue(dummyMessage);
     Messages.update = jest.fn();
     Messages.findAll = mockMessagesFindAll.mockResolvedValue(dummyMessages);
-
-    // Upload = jest.fn().mockImplementation(() => ({
-    //     on: jest.fn().mockResolvedValue({progress: 100}),
-    //     done: jest.fn().mockResolvedValue({Location: 'https://aws.s3.url'})
-    // }));
   });
 
   afterEach(() => {
