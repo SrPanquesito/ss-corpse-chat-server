@@ -4,6 +4,7 @@ module.exports = {
   clearMocks: true,
   // Automatically restore mock state between every test
   restoreMocks: true,
+  forceExit: true,
   // Coverage configuration
   collectCoverage: true,
   collectCoverageFrom: ["./src/**"],
