@@ -71,11 +71,12 @@ Or where did I last leave the project?
 - [x] Configure AWS S3, config bucket for public access and handle file uploading in parallel stream
 - [x] Register -> Profile picture upload should save in s3 and display remote image for the contact in chat layout
 - [x] Chat -> Create messages, imageUrl should point to s3 file url, senderId and receiverId should point to contacts. Verify in DB
+- [x] Configure linter and hooks
+- [x] Configure jest
 
 ## To-Do
 
-- [ ] Configure linter
-- [ ] Configure jest
+- [ ] Unit tests 90% + coverage
 - [ ] Configure splunk for logs and monitoring
 
 
