@@ -35,7 +35,8 @@
     "npm": ">=10.0.0"
   },
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "jest",
     "config:lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "config:prettier": "prettier --write --ignore-unknown",

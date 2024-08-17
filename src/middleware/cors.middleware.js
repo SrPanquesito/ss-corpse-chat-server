@@ -1,11 +1,14 @@
 const allowlist = [
-    'http://example1.com',
-    'http://localhost:4000'
-];
+    'http://corpsechat.com',
+    'https://corpsechat.com',
+    'http://www.corpsechat.com',
+    'https://www.corpsechat.com',
+    'http://localhost:4000',
+]
 
 const corsOptions = {
     origin: allowlist,
-    optionsSuccessStatus: 200 // For legacy browser support
-};
+    optionsSuccessStatus: 200, // For legacy browser support
+}
 
-module.exports = {corsOptions};
+module.exports = { corsOptions }
