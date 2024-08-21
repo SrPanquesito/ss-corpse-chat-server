@@ -1,10 +1,10 @@
-const allowlist = [
-    'http://corpsechat.com',
-    'https://corpsechat.com',
-    'http://www.corpsechat.com',
-    'https://www.corpsechat.com',
-    'http://localhost:4000',
-]
+let allowlist = []
+
+try {
+    allowlist = process.env.ALLOW_LIST ? JSON.parse(process.env.ALLOW_LIST) : []
+} catch (error) {
+    console.error('Failed to parse ALLOW_LIST:', error)
+}
 
 const corsOptions = {
     origin: allowlist,
