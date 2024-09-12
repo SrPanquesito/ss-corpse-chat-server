@@ -40,7 +40,8 @@
     "test": "jest",
     "config:lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "config:prettier": "prettier --write --ignore-unknown",
-    "prepare": "husky"
+    "prepare": "husky",
+    "transaction:default_table_relations:users": "node src/database/transactions/users.transaction.js"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

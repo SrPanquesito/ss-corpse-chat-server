@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('../mysql.configuration')
 
-const Messages = sequelize.define('Messages', {
+const UserVerification = sequelize.define('UserVerification', {
     id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
@@ -9,20 +9,18 @@ const Messages = sequelize.define('Messages', {
         allowNull: false,
         unique: true,
     },
-    text: {
-        // Need to encrypt
-        type: DataTypes.STRING,
-        defaultValue: '',
-    },
-    imageUrl: {
-        type: DataTypes.STRING,
-        defaultValue: '',
-    },
-    status: {
+    verificationMethod: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: 'unseen',
+    },
+    verificationCode: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    isVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
     },
 })
 
-module.exports = Messages
+module.exports = UserVerification
