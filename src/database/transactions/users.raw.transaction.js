@@ -66,3 +66,5 @@ async function execute() {
 execute().catch((error) => {
     console.error('Error occurred:', error)
 })
+
+module.exports = execute

@@ -82,5 +82,8 @@ try {
     initializeSQLConnection()
     execute()
 } catch (error) {
+    // istanbul ignore next
     console.error('Error occurred:', error)
 }
+
+module.exports = execute
