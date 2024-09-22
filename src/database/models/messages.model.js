@@ -17,11 +17,17 @@ const Messages = sequelize.define('Messages', {
     imageUrl: {
         type: DataTypes.STRING,
         defaultValue: '',
+        allowNull: true,
     },
     status: {
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'unseen',
+    },
+    thumbnailUrl: {
+        type: DataTypes.STRING,
+        defaultValue: '',
+        allowNull: true,
     },
 })
 
