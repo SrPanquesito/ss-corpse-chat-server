@@ -41,10 +41,9 @@
     "config:lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "config:prettier": "prettier --write --ignore-unknown",
     "prepare": "husky",
-    "transaction:users": "node src/database/transactions/users.transaction.js",
-    "transaction:raw:users": "node src/database/transactions/users.raw.transaction.js",
-    "transaction:messagesAddColumn": "node src/database/transactions/messagesAddThumbnailColumn.transaction.js",
-    "transaction:usersAddColumn": "node src/database/transactions/usersAddProfilePictureThumbnailColumn.transaction.js"
+    "t:usersHydrateRelatedTables": "node src/database/transactions/users.raw.transaction.js",
+    "t:messagesAddColumn": "node src/database/transactions/messagesAddThumbnailColumn.transaction.js",
+    "t:usersAddColumn": "node src/database/transactions/usersAddProfilePictureThumbnailColumn.transaction.js"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

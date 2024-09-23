@@ -5,6 +5,7 @@ const {
 } = require('#controllers/utils/validationResultChecker')
 const Users = require('#models/users.model')
 const { uploadFileToS3 } = require('#clients/aws.s3.client')
+const { v4: uuidv4 } = require('uuid')
 
 const register = async (req, res, next) => {
     if (errorsOnValidation(req, res, next)) return
@@ -17,7 +18,7 @@ const register = async (req, res, next) => {
 
         let s3File
         if (req.file) {
-            req.file.originalname = 'profilePicture-' + req.file.originalname
+            req.file.originalname = uuidv4() + '_user_' + req.body.username
             s3File = await uploadFileToS3(req.file)
         }
         const user = await Users.create({
