@@ -3,6 +3,7 @@ const Users = require('#models/users.model')
 const Messages = require('#models/messages.model')
 const { uploadFileToS3 } = require('#clients/aws.s3.client')
 const { v4: uuidv4 } = require('uuid')
+const path = require('path')
 
 const getAllUsersRaw = async (req, res, next) => {
     try {
@@ -70,7 +71,9 @@ const createMessage = async (req, res, next) => {
 
         // Fallback code. It should only trigger if UI fails to upload image in separate request.
         if (!imageUrl && req.file) {
-            req.file.originalname = uuidv4() + '_message_' + sender.username
+            const fileExtension = path.extname(req.file.originalname) // Extract the file extension
+            req.file.originalname =
+                sender.username + '_message_' + uuidv4() + fileExtension
             const s3File = await uploadFileToS3(req.file)
             imageUrl = s3File?.Location || ''
         }
@@ -147,7 +150,9 @@ const uploadSingleImageToS3 = async (req, res, next) => {
         const username = req.body.username
         let s3File
         if (req.file && username) {
-            req.file.originalname = uuidv4() + '_message_' + username
+            const fileExtension = path.extname(req.file.originalname) // Extract the file extension
+            req.file.originalname =
+                username + '_message_' + uuidv4() + fileExtension
             s3File = await uploadFileToS3(req.file)
         }
 
