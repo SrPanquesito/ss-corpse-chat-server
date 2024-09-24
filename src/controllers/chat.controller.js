@@ -28,6 +28,7 @@ const getAllUsersRaw = async (req, res, next) => {
                 username: userJson.username,
                 email: userJson.email,
                 profilePictureUrl: userJson.profilePictureUrl,
+                profilePictureThumbnailUrl: userJson.profilePictureThumbnailUrl,
                 status: userJson.status,
             }
         })
