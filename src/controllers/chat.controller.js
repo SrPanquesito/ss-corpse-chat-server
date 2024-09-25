@@ -21,17 +21,22 @@ const getAllUsersRaw = async (req, res, next) => {
             throw error
         }
 
-        let mappedUsers = users.map((user) => {
+        // Ensure unique users only
+        const mappedUsersSet = new Set()
+
+        users.forEach((user) => {
             const userJson = user.toJSON()
-            return {
+            mappedUsersSet.add({
                 id: userJson.id,
                 username: userJson.username,
                 email: userJson.email,
                 profilePictureUrl: userJson.profilePictureUrl,
                 profilePictureThumbnailUrl: userJson.profilePictureThumbnailUrl,
                 status: userJson.status,
-            }
+            })
         })
+
+        const mappedUsers = Array.from(mappedUsersSet)
 
         for (let i = 0; i < mappedUsers.length; i++) {
             const lastMessage = await getLastMessage(
