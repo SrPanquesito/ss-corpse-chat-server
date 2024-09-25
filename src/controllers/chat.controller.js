@@ -110,6 +110,11 @@ const getAllMessagesByContactId = async (req, res, next) => {
         const loggedUserId = req.userId
         const contactId = req.params.contactId
 
+        // Extract pagination parameters from query
+        const page = parseInt(req.query.page) || 1
+        const pageSize = parseInt(req.query.pageSize) || 10
+        const offset = (page - 1) * pageSize
+
         await Messages.update(
             { status: 'seen' },
             {
@@ -121,14 +126,19 @@ const getAllMessagesByContactId = async (req, res, next) => {
                 },
             }
         )
-        const messages = await Messages.findAll({
+        const messages = await Messages.findAndCountAll({
             where: {
                 [Op.or]: [
                     { senderId: loggedUserId, receiverId: contactId },
                     { senderId: contactId, receiverId: loggedUserId },
                 ],
             },
-            order: [['createdAt', 'DESC']],
+            order: [
+                ['createdAt', 'DESC'],
+                ['id', 'DESC'],
+            ],
+            limit: pageSize,
+            offset,
         })
         if (!messages) {
             const error = new Error('Failed to retrieve messages from DB.')
@@ -136,7 +146,7 @@ const getAllMessagesByContactId = async (req, res, next) => {
             throw error
         }
 
-        let mappedData = messages.map((msg) => {
+        let mappedData = messages.rows.map((msg) => {
             return msg.toJSON()
         })
 
@@ -144,6 +154,12 @@ const getAllMessagesByContactId = async (req, res, next) => {
             success: true,
             errorMessage: null,
             data: mappedData,
+            pagination: {
+                totalItems: messages.count,
+                totalPages: Math.ceil(messages.count / pageSize),
+                currentPage: page,
+                pageSize: pageSize,
+            },
         })
     } catch (error) {
         next(error)
