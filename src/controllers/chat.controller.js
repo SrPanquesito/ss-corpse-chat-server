@@ -8,12 +8,24 @@ const path = require('path')
 const getAllUsersRaw = async (req, res, next) => {
     try {
         const loggedUserId = req.userId
-        const users = await Users.findAll({
+
+        // Extract pagination parameters from query
+        const page = parseInt(req.query.page) || 1
+        const pageSize = parseInt(req.query.pageSize) || 10
+        const offset = (page - 1) * pageSize
+
+        const users = await Users.findAndCountAll({
             where: {
                 id: {
                     [Op.ne]: loggedUserId,
                 },
             },
+            order: [
+                ['createdAt', 'DESC'],
+                ['id', 'DESC'],
+            ],
+            limit: pageSize,
+            offset,
         })
         if (!users) {
             const error = new Error('Failed to retrieve all users from DB.')
@@ -24,7 +36,7 @@ const getAllUsersRaw = async (req, res, next) => {
         // Ensure unique users only
         const mappedUsersSet = new Set()
 
-        users.forEach((user) => {
+        users.rows.forEach((user) => {
             const userJson = user.toJSON()
             mappedUsersSet.add({
                 id: userJson.id,
@@ -52,6 +64,12 @@ const getAllUsersRaw = async (req, res, next) => {
             success: true,
             errorMessage: null,
             data: mappedUsers,
+            pagination: {
+                totalItems: users.count,
+                totalPages: Math.ceil(users.count / pageSize),
+                currentPage: page,
+                pageSize: pageSize,
+            },
         })
     } catch (error) {
         next(error)
