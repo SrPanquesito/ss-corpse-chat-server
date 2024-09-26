@@ -76,6 +76,43 @@ const getAllUsersRaw = async (req, res, next) => {
     }
 }
 
+const getUserById = async (req, res, next) => {
+    try {
+        const loggedUserId = req.userId
+        const userId = req.query.id
+
+        const user = await Users.findOne({
+            where: {
+                id: {
+                    [Op.eq]: userId,
+                },
+            },
+        })
+        if (!user) {
+            const error = new Error(
+                `Failed to retrieve user from DB with userId: ${userId}`
+            )
+            error.statusCode = 401
+            throw error
+        }
+
+        const userJson = user.toJSON()
+
+        const lastMessage = await getLastMessage(loggedUserId, userJson.id)
+        if (lastMessage) {
+            userJson.lastMessage = lastMessage.toJSON()
+        }
+
+        res.status(200).json({
+            success: true,
+            errorMessage: null,
+            data: userJson,
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
 const getLastMessage = async (userId, contactId) => {
     return await Messages.findOne({
         where: {
@@ -210,6 +247,7 @@ const uploadSingleImageToS3 = async (req, res, next) => {
 
 module.exports = {
     getAllUsersRaw,
+    getUserById,
     createMessage,
     getAllMessagesByContactId,
     uploadSingleImageToS3,
