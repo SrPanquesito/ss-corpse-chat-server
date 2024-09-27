@@ -11,6 +11,7 @@ module.exports = {
         './src/**',
         '!./src/config/**',
         '!./src/database/transactions/**',
+        '!./src/database/models/**',
     ],
     coverageReporters: ['json', 'text', 'html'],
     coverageThreshold: {

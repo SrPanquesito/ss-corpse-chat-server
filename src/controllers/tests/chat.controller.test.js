@@ -1,206 +1,290 @@
-const { Op } = require("sequelize");
-const Users = require("#models/users.model");
-const Messages = require("#models/messages.model");
+const { Op } = require('sequelize')
+const Users = require('#models/users.model')
+const Messages = require('#models/messages.model')
 const {
-  getAllUsersRaw,
-  createMessage,
-  getAllMessagesByContactId,
-  uploadSingleImageToS3,
-} = require("../chat.controller");
+    getAllUsersRaw,
+    getUserById,
+    createMessage,
+    getAllMessagesByContactId,
+    uploadSingleImageToS3,
+} = require('../chat.controller')
 const {
-  mockResponse,
-  dummyRequest,
-  dummyUsers,
-  dummyMessage,
-  dummyMessages,
-} = require("../../../tests/mock/config.mock");
+    mockResponse,
+    dummyRequest,
+    dummyUsers,
+    dummyUsersFindAndCountAll,
+    dummyMessage,
+    dummyMessages,
+    dummyMessagesFindAndCountAll,
+} = require('../../../tests/mock/config.mock')
 
-jest.mock("#models/users.model");
-jest.mock("#models/messages.model");
-jest.mock("@aws-sdk/client-s3");
-jest.mock("@aws-sdk/lib-storage");
-jest.mock("#clients/aws.s3.client");
+jest.mock('#models/users.model')
+jest.mock('#models/messages.model')
+jest.mock('@aws-sdk/client-s3')
+jest.mock('@aws-sdk/lib-storage')
+jest.mock('#clients/aws.s3.client')
 
-describe("src/controllers/chat.controller.js", () => {
-  const mockUserFindAll = jest.fn();
-  const mockMessagesFindOne = jest.fn();
-  const mockMessagesFindAll = jest.fn();
-  let mappedUser;
-  let mappedUserResponse;
-  let res, req, next;
+describe('src/controllers/chat.controller.js', () => {
+    const mockUserFindAndCountAll = jest.fn()
+    const mockUserFindOne = jest.fn()
+    const mockMessagesFindOne = jest.fn()
+    const mockMessagesFindAndCountAll = jest.fn()
+    let mappedUser
+    let mappedUserResponse
+    let res, req, next
 
-  beforeEach(() => {
-    Op.ne = jest.fn();
-    Op.or = jest.fn();
-    req = dummyRequest;
-    res = mockResponse();
-    next = jest.fn();
-    Users.findAll = mockUserFindAll.mockResolvedValue(dummyUsers);
-    Messages.findOne = mockMessagesFindOne.mockResolvedValue(dummyMessage);
-    Messages.update = jest.fn();
-    Messages.findAll = mockMessagesFindAll.mockResolvedValue(dummyMessages);
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  describe("getAllUsersRaw", () => {
     beforeEach(() => {
-      mappedUser = { ...dummyUsers[0] };
-      delete mappedUser.password;
-      delete mappedUser.toJSON;
-      delete mappedUser.token;
-      mappedUserResponse = { ...mappedUser, lastMessage: { ...dummyMessage } };
-    });
-
-    test("successfull response", async () => {
-      await getAllUsersRaw(req, res, next);
-
-      const { success, errorMessage, data } = res.json.mock.calls[0][0];
-
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(success).toBeTruthy();
-      expect(errorMessage).toBeNull();
-      expect(data[0]).toEqual(mappedUserResponse);
-    });
-
-    test("successfull response without last message retrieved", async () => {
-      mockMessagesFindOne.mockResolvedValue(null);
-      mappedUserResponse = { ...mappedUser };
-
-      await getAllUsersRaw(req, res, next);
-
-      const { success, errorMessage, data } = res.json.mock.calls[0][0];
-
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(success).toBeTruthy();
-      expect(errorMessage).toBeNull();
-      expect(data[0]).toEqual(mappedUserResponse);
-    });
-
-    test("error with status code 401", async () => {
-      const error = new Error("Failed to retrieve all users from DB.");
-      error.statusCode = 401;
-      mockUserFindAll.mockResolvedValue(null);
-
-      await getAllUsersRaw(req, res, next);
-
-      expect(next).toHaveBeenCalledWith(error);
-    });
-  });
-
-  describe("createMessage", () => {
-    beforeEach(() => {
-      req = dummyRequest;
-    });
+        Op.ne = jest.fn()
+        Op.or = jest.fn()
+        req = dummyRequest
+        res = mockResponse()
+        next = jest.fn()
+        Users.findAndCountAll = mockUserFindAndCountAll.mockResolvedValue(
+            dummyUsersFindAndCountAll
+        )
+        Users.findOne = mockUserFindOne.mockResolvedValue(dummyUsers[0])
+        Messages.findOne = mockMessagesFindOne.mockResolvedValue(dummyMessage)
+        Messages.update = jest.fn()
+        Messages.findAndCountAll =
+            mockMessagesFindAndCountAll.mockResolvedValue(
+                dummyMessagesFindAndCountAll
+            )
+    })
 
     afterEach(() => {
-      jest.clearAllMocks();
-    });
+        jest.clearAllMocks()
+    })
 
-    test("successfull response", async () => {
-      await createMessage(req, res, next);
+    describe('getAllUsersRaw', () => {
+        beforeEach(() => {
+            mappedUser = { ...dummyUsers[0] }
+            delete mappedUser.password
+            delete mappedUser.toJSON
+            delete mappedUser.token
+            mappedUserResponse = {
+                ...mappedUser,
+                lastMessage: { ...dummyMessage },
+            }
+        })
 
-      const { success, errorMessage } = res.json.mock.calls[0][0];
+        test('successfull response', async () => {
+            await getAllUsersRaw(req, res, next)
 
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(success).toBeTruthy();
-      expect(errorMessage).toBeNull();
-    });
+            const { success, errorMessage, data } = res.json.mock.calls[0][0]
 
-    test("successfull response without imageUrl, upload file to aws", async () => {
-      delete req.body.imageUrl;
+            expect(res.status).toHaveBeenCalledWith(200)
+            expect(success).toBeTruthy()
+            expect(errorMessage).toBeNull()
+            expect(data[0]).toEqual(mappedUserResponse)
+        })
 
-      await createMessage(req, res, next);
+        test('successfull response without specified pagination', async () => {
+            req = { ...dummyRequest, query: {} }
+            await getAllUsersRaw(req, res, next)
 
-      const { success, errorMessage } = res.json.mock.calls[0][0];
+            const { success, errorMessage, data } = res.json.mock.calls[0][0]
 
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(success).toBeTruthy();
-      expect(errorMessage).toBeNull();
-    });
+            expect(res.status).toHaveBeenCalledWith(200)
+            expect(success).toBeTruthy()
+            expect(errorMessage).toBeNull()
+            expect(data[0]).toEqual(mappedUserResponse)
+        })
 
-    test("error on create new message", async () => {
-      await createMessage({}, res, next);
+        test('successfull response without last message retrieved', async () => {
+            mockMessagesFindOne.mockResolvedValue(null)
+            mappedUserResponse = { ...mappedUser }
 
-      const nextError = next.mock.calls[0][0];
+            await getAllUsersRaw(req, res, next)
 
-      expect(nextError.message).toContain("Cannot destructure property");
-    });
-  });
+            const { success, errorMessage, data } = res.json.mock.calls[0][0]
 
-  describe("getAllMessagesByContactId", () => {
-    beforeEach(() => {
-      req = { ...dummyRequest, params: { contactId: 123 } };
-    });
+            expect(res.status).toHaveBeenCalledWith(200)
+            expect(success).toBeTruthy()
+            expect(errorMessage).toBeNull()
+            expect(data[0]).toEqual(mappedUserResponse)
+        })
 
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
+        test('error with status code 401', async () => {
+            const error = new Error('Failed to retrieve all users from DB.')
+            error.statusCode = 401
+            mockUserFindAndCountAll.mockResolvedValue(null)
 
-    test("successfull response", async () => {
-      await getAllMessagesByContactId(req, res, next);
+            await getAllUsersRaw(req, res, next)
 
-      const { success, errorMessage, data } = res.json.mock.calls[0][0];
+            expect(next).toHaveBeenCalledWith(error)
+        })
+    })
 
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(success).toBeTruthy();
-      expect(errorMessage).toBeNull();
-      expect(data[0]).toEqual(dummyMessages[0]);
-    });
+    describe('getUserById', () => {
+        beforeEach(() => {
+            mappedUser = { ...dummyUsers[0] }
+            mappedUserResponse = {
+                ...mappedUser,
+                lastMessage: { ...dummyMessage },
+            }
+        })
 
-    test("error on create new message", async () => {
-      mockMessagesFindAll.mockResolvedValue(null);
+        test('successful response with last message', async () => {
+            await getUserById(req, res, next)
 
-      await getAllMessagesByContactId(req, res, next);
+            const { success, errorMessage, data } = res.json.mock.calls[0][0]
 
-      const nextError = next.mock.calls[0][0];
+            expect(res.status).toHaveBeenCalledWith(200)
+            expect(success).toBeTruthy()
+            expect(errorMessage).toBeNull()
+            expect(data).toEqual(mappedUserResponse)
+        })
 
-      expect(nextError.message).toContain(
-        "Failed to retrieve messages from DB.",
-      );
-    });
-  });
+        test('successfull response without last message retrieved', async () => {
+            mockMessagesFindOne.mockResolvedValue(null)
+            delete mappedUserResponse.lastMessage
 
-  describe("uploadSingleImageToS3", () => {
-    beforeEach(() => {
-      req = dummyRequest;
-    });
+            await getUserById(req, res, next)
 
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
+            const { success, errorMessage, data } = res.json.mock.calls[0][0]
 
-    test("successfull response", async () => {
-      await uploadSingleImageToS3(req, res, next);
+            expect(res.status).toHaveBeenCalledWith(200)
+            expect(success).toBeTruthy()
+            expect(errorMessage).toBeNull()
+            expect(data).toEqual(mappedUserResponse)
+        })
 
-      const { success, errorMessage } = res.json.mock.calls[0][0];
+        test('error handling', async () => {
+            const error = new Error(
+                'Failed to retrieve user from DB with userId: id'
+            )
+            error.statusCode = 401
+            mockUserFindOne.mockResolvedValue(null)
 
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(success).toBeTruthy();
-      expect(errorMessage).toBeNull();
-    });
+            await getUserById(req, res, next)
 
-    test("successfull response without file, do not upload any file to aws but return empty imageUrl", async () => {
-      delete req.file;
+            expect(next).toHaveBeenCalledWith(error)
+        })
+    })
 
-      await uploadSingleImageToS3(req, res, next);
+    describe('createMessage', () => {
+        beforeEach(() => {
+            req = dummyRequest
+        })
 
-      const { success, errorMessage, data } = res.json.mock.calls[0][0];
+        afterEach(() => {
+            jest.clearAllMocks()
+        })
 
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(success).toBeTruthy();
-      expect(errorMessage).toBeNull();
-      expect(data.imageUrl).toBe("");
-    });
+        test('successfull response', async () => {
+            await createMessage(req, res, next)
 
-    test("error on create new message", async () => {
-      await uploadSingleImageToS3(req, {}, next);
+            const { success, errorMessage } = res.json.mock.calls[0][0]
 
-      const nextError = next.mock.calls[0][0];
+            expect(res.status).toHaveBeenCalledWith(201)
+            expect(success).toBeTruthy()
+            expect(errorMessage).toBeNull()
+        })
 
-      expect(nextError.message).toContain("res.status is not a function");
-    });
-  });
-});
+        test('successfull response without imageUrl, upload file to aws', async () => {
+            delete req.body.imageUrl
+
+            await createMessage(req, res, next)
+
+            const { success, errorMessage } = res.json.mock.calls[0][0]
+
+            expect(res.status).toHaveBeenCalledWith(201)
+            expect(success).toBeTruthy()
+            expect(errorMessage).toBeNull()
+        })
+
+        test('error on create new message', async () => {
+            await createMessage({}, res, next)
+
+            const nextError = next.mock.calls[0][0]
+
+            expect(nextError.message).toContain('Cannot destructure property')
+        })
+    })
+
+    describe('getAllMessagesByContactId', () => {
+        beforeEach(() => {
+            req = { ...dummyRequest, params: { contactId: 123 } }
+        })
+
+        afterEach(() => {
+            jest.clearAllMocks()
+        })
+
+        test('successfull response', async () => {
+            await getAllMessagesByContactId(req, res, next)
+
+            const { success, errorMessage, data } = res.json.mock.calls[0][0]
+
+            expect(res.status).toHaveBeenCalledWith(200)
+            expect(success).toBeTruthy()
+            expect(errorMessage).toBeNull()
+            expect(data[0]).toEqual(dummyMessages[0])
+        })
+
+        test('successfull response without specified pagination', async () => {
+            req = { ...dummyRequest, query: {}, params: { contactId: 123 } }
+            await getAllMessagesByContactId(req, res, next)
+
+            const { success, errorMessage, data } = res.json.mock.calls[0][0]
+
+            expect(res.status).toHaveBeenCalledWith(200)
+            expect(success).toBeTruthy()
+            expect(errorMessage).toBeNull()
+            expect(data[0]).toEqual(dummyMessages[0])
+        })
+
+        test('error on create new message', async () => {
+            mockMessagesFindAndCountAll.mockResolvedValue(null)
+
+            await getAllMessagesByContactId(req, res, next)
+
+            const nextError = next.mock.calls[0][0]
+
+            expect(nextError.message).toContain(
+                'Failed to retrieve messages from DB.'
+            )
+        })
+    })
+
+    describe('uploadSingleImageToS3', () => {
+        beforeEach(() => {
+            req = dummyRequest
+        })
+
+        afterEach(() => {
+            jest.clearAllMocks()
+        })
+
+        test('successfull response', async () => {
+            await uploadSingleImageToS3(req, res, next)
+
+            const { success, errorMessage } = res.json.mock.calls[0][0]
+
+            expect(res.status).toHaveBeenCalledWith(201)
+            expect(success).toBeTruthy()
+            expect(errorMessage).toBeNull()
+        })
+
+        test('successfull response without file, do not upload any file to aws but return empty imageUrl', async () => {
+            delete req.file
+
+            await uploadSingleImageToS3(req, res, next)
+
+            const { success, errorMessage, data } = res.json.mock.calls[0][0]
+
+            expect(res.status).toHaveBeenCalledWith(201)
+            expect(success).toBeTruthy()
+            expect(errorMessage).toBeNull()
+            expect(data.imageUrl).toBe('')
+        })
+
+        test('error on create new message', async () => {
+            await uploadSingleImageToS3(req, {}, next)
+
+            const nextError = next.mock.calls[0][0]
+
+            expect(nextError.message).toContain('res.status is not a function')
+        })
+    })
+})
