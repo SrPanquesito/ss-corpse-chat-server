@@ -4,6 +4,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const initializeSQLConnection = require('#database/mysql.init')
 const { corsOptions } = require('#middleware/cors.middleware')
+const { limiter } = require('#middleware/ratelimiter.middleware')
 const authRouter = require('#routes/auth.router')
 const chatRouter = require('#routes/chat.router')
 const errorHandler = require('#utils/errorHandler')
@@ -15,6 +16,9 @@ const PORT = process.env.PORT || 3000
 
 // Cross-Origin Request Sharing (CORS)
 app.use(cors(corsOptions))
+
+// Rate limiter
+app.use(limiter)
 
 // Parse incoming requests as application/json
 app.use(bodyParser.json())
