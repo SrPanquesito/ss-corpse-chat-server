@@ -12,6 +12,7 @@ const dummyUser = {
     password: 'password123',
     status: 'ACTIVE',
     profilePictureUrl: 'mockedProfilePictureUrl',
+    profilePictureThumbnailUrl: 'mockedProfilePictureThumbnailUrl',
     token: 'mockedToken',
     toJSON: () => ({ ...dummyUser }),
 }

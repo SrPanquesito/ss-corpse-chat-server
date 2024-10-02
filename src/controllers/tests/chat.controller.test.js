@@ -1,6 +1,7 @@
 const { Op } = require('sequelize')
 const Users = require('#models/users.model')
 const Messages = require('#models/messages.model')
+const { decryptText } = require('../utils/stringCipher')
 const {
     getAllUsersRaw,
     getUserById,
@@ -23,6 +24,7 @@ jest.mock('#models/messages.model')
 jest.mock('@aws-sdk/client-s3')
 jest.mock('@aws-sdk/lib-storage')
 jest.mock('#clients/aws.s3.client')
+jest.mock('../utils/stringCipher')
 
 describe('src/controllers/chat.controller.js', () => {
     const mockUserFindAndCountAll = jest.fn()
@@ -49,6 +51,7 @@ describe('src/controllers/chat.controller.js', () => {
             mockMessagesFindAndCountAll.mockResolvedValue(
                 dummyMessagesFindAndCountAll
             )
+        decryptText.mockImplementation((text) => text)
     })
 
     afterEach(() => {
