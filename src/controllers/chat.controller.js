@@ -5,6 +5,9 @@ const { uploadFileToS3 } = require('#clients/aws.s3.client')
 const { v4: uuidv4 } = require('uuid')
 const path = require('path')
 const { encryptText, decryptText } = require('./utils/stringCipher')
+const {
+    errorsOnValidation,
+} = require('#controllers/utils/validationResultChecker')
 
 const getAllUsersRaw = async (req, res, next) => {
     try {
@@ -131,6 +134,8 @@ const getLastMessage = async (userId, contactId) => {
 }
 
 const createMessage = async (req, res, next) => {
+    if (errorsOnValidation(req, res, next)) return
+
     try {
         let { sender, receiver, message } = req.body
         let imageUrl = req.body.imageUrl || ''
@@ -231,6 +236,8 @@ const getAllMessagesByContactId = async (req, res, next) => {
 
 // Messages single image uploader to S3
 const uploadSingleImageToS3 = async (req, res, next) => {
+    if (errorsOnValidation(req, res, next)) return
+
     try {
         const username = req.body.username
         let s3File

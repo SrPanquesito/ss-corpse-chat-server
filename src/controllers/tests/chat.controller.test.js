@@ -3,6 +3,9 @@ const Users = require('#models/users.model')
 const Messages = require('#models/messages.model')
 const { decryptText } = require('../utils/stringCipher')
 const {
+    errorsOnValidation,
+} = require('#controllers/utils/validationResultChecker')
+const {
     getAllUsersRaw,
     getUserById,
     createMessage,
@@ -25,6 +28,7 @@ jest.mock('@aws-sdk/client-s3')
 jest.mock('@aws-sdk/lib-storage')
 jest.mock('#clients/aws.s3.client')
 jest.mock('../utils/stringCipher')
+jest.mock('#controllers/utils/validationResultChecker')
 
 describe('src/controllers/chat.controller.js', () => {
     const mockUserFindAndCountAll = jest.fn()
@@ -52,6 +56,7 @@ describe('src/controllers/chat.controller.js', () => {
                 dummyMessagesFindAndCountAll
             )
         decryptText.mockImplementation((text) => text)
+        errorsOnValidation.mockImplementation(() => false)
     })
 
     afterEach(() => {
@@ -196,6 +201,16 @@ describe('src/controllers/chat.controller.js', () => {
             expect(errorMessage).toBeNull()
         })
 
+        test('error validation failed', async () => {
+            errorsOnValidation.mockImplementation(() => true)
+
+            await createMessage(req, res, next)
+
+            expect(res.status).not.toHaveBeenCalled()
+            expect(res.json).not.toHaveBeenCalled()
+            expect(next).not.toHaveBeenCalled()
+        })
+
         test('error on create new message', async () => {
             await createMessage({}, res, next)
 
@@ -280,6 +295,16 @@ describe('src/controllers/chat.controller.js', () => {
             expect(success).toBeTruthy()
             expect(errorMessage).toBeNull()
             expect(data.imageUrl).toBe('')
+        })
+
+        test('error validation failed', async () => {
+            errorsOnValidation.mockImplementation(() => true)
+
+            await uploadSingleImageToS3(req, res, next)
+
+            expect(res.status).not.toHaveBeenCalled()
+            expect(res.json).not.toHaveBeenCalled()
+            expect(next).not.toHaveBeenCalled()
         })
 
         test('error on create new message', async () => {
