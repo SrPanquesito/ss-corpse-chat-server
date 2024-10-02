@@ -59,6 +59,8 @@ const register = async (req, res, next) => {
 }
 
 const login = async (req, res, next) => {
+    if (errorsOnValidation(req, res, next)) return
+
     try {
         const email = req.body.email
         const password = req.body.password
