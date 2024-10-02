@@ -4,6 +4,7 @@ const Messages = require('#models/messages.model')
 const { uploadFileToS3 } = require('#clients/aws.s3.client')
 const { v4: uuidv4 } = require('uuid')
 const path = require('path')
+const { encryptText, decryptText } = require('./utils/stringCipher')
 
 const getAllUsersRaw = async (req, res, next) => {
     try {
@@ -114,7 +115,7 @@ const getUserById = async (req, res, next) => {
 }
 
 const getLastMessage = async (userId, contactId) => {
-    return await Messages.findOne({
+    const lastMessage = await Messages.findOne({
         where: {
             [Op.or]: [
                 { senderId: userId, receiverId: contactId },
@@ -123,11 +124,15 @@ const getLastMessage = async (userId, contactId) => {
         },
         order: [['createdAt', 'DESC']],
     })
+    if (lastMessage) {
+        lastMessage.text = decryptText(lastMessage.text)
+    }
+    return lastMessage
 }
 
 const createMessage = async (req, res, next) => {
     try {
-        const { sender, receiver, message } = req.body
+        let { sender, receiver, message } = req.body
         let imageUrl = req.body.imageUrl || ''
 
         // Fallback code. It should only trigger if UI fails to upload image in separate request.
@@ -139,8 +144,10 @@ const createMessage = async (req, res, next) => {
             imageUrl = s3File?.Location || ''
         }
 
+        const encryptedText = encryptText(message)
+
         const createdMessage = new Messages({
-            text: message,
+            text: encryptedText,
             senderId: sender.id,
             receiverId: receiver.id,
             imageUrl,
@@ -202,6 +209,7 @@ const getAllMessagesByContactId = async (req, res, next) => {
         }
 
         let mappedData = messages.rows.map((msg) => {
+            msg.text = decryptText(msg.text)
             return msg.toJSON()
         })
 
