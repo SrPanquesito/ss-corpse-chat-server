@@ -60,6 +60,7 @@ async function execute() {
     } finally {
         // Release the connection
         connection.release()
+        process.exit()
     }
 }
 

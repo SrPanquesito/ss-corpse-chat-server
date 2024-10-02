@@ -44,7 +44,8 @@
     "prepare": "husky",
     "t:usersHydrateRelatedTables": "node src/database/transactions/users.raw.transaction.js",
     "t:messagesAddColumn": "node src/database/transactions/messagesAddThumbnailColumn.transaction.js",
-    "t:usersAddColumn": "node src/database/transactions/usersAddProfilePictureThumbnailColumn.transaction.js"
+    "t:usersAddColumn": "node src/database/transactions/usersAddProfilePictureThumbnailColumn.transaction.js",
+    "t:deleteUser": "node src/database/transactions/deleteUser.raw.transaction.js"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
