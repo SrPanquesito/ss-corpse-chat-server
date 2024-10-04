@@ -73,10 +73,11 @@ Or where did I last leave the project?
 - [x] Chat -> Create messages, imageUrl should point to s3 file url, senderId and receiverId should point to contacts. Verify in DB
 - [x] Configure linter and hooks
 - [x] Configure jest
+- [x] Unit tests 90% + coverage
+- [x] Lots of stuff... Check commits, lol
 
 ## To-Do
 
-- [ ] Unit tests 90% + coverage
 - [ ] Configure splunk for logs and monitoring
 
 
