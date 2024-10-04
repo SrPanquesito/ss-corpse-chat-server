@@ -12,18 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Use Node.js 18 and cache node_modules
+    - uses: ArtiomTr/jest-coverage-report-action@v2
+    - name: Use Node.js 18 jest coverage report
       uses: actions/setup-node@v4
       with:
           node-version: '18.x'
           cache: 'npm'
-    - run: npm ci
-
-  coverage:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: ArtiomTr/jest-coverage-report-action@v2
-    - name: Jest coverage report
-      with:
           test-script: npm test
+    - run: npm ci
