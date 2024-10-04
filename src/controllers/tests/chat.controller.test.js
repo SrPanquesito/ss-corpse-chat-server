@@ -312,7 +312,7 @@ describe('src/controllers/chat.controller.js', () => {
 
             const nextError = next.mock.calls[0][0]
 
-            expect(nextError.message).toContain('res.status is not a function')
+            expect(nextError.message).toContain('res.status is a function')
         })
     })
 })
