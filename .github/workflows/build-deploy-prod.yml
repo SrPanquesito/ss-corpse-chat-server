@@ -52,8 +52,8 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
               cd /home/${{ secrets.USER_NAME }}/code/ss-corpse-chat-server &&
               docker login -u ${{ vars.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }} &&
+              docker stop server && docker rm server &&
               docker image rm ${{ vars.DOCKERHUB_USERNAME }}/ss-corpse-chat-server &&
               docker image pull ${{ vars.DOCKERHUB_USERNAME }}/ss-corpse-chat-server:latest &&
-              docker stop server && docker rm server &&
               docker run -it --name server --platform linux/amd64 -d -p 8083:8080 ${{ vars.DOCKERHUB_USERNAME }}/ss-corpse-chat-server
               '
