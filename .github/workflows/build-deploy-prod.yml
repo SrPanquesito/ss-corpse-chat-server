@@ -27,6 +27,19 @@ jobs:
           context: .
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/ss-corpse-chat-server:latest
+          secrets: |
+            "PORT=8080"
+            "JWT_SECRET=${{ secrets.JWT_SECRET }}"
+            "AWS_REGION=us-west-2"
+            "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}"
+            "AWS_ACCESS_KEY_SECRET=${{ secrets.AWS_ACCESS_KEY_SECRET }}"
+            "AWS_S3_BUCKET_NAME=ss-corpse-chat-general-bucket"
+            "MYSQL_HOST=${{ secrets.MYSQL_HOST }}"
+            "MYSQL_PORT=${{ secrets.MYSQL_PORT }}"
+            "MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }}"
+            "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}"
+            "MYSQL_DBNAME=${{ secrets.MYSQL_DBNAME }}"
+            "ALLOW_LIST=["https://corpsechat.com","https://www.corpsechat.com"]" 
       -
         name: Pull & Deploy
         env:
