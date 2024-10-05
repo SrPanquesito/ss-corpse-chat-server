@@ -4,8 +4,8 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://corpsechat.com/src/assets/images/logo.png">
-    <img src="https://corpsechat.com/src/assets/images/logo.png" alt="Logo" width="80" height="80">
+  <a href="assets/images/logo.png">
+    <img src="assets/images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Corpse Chat Server</h3>
