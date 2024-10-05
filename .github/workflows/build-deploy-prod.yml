@@ -37,7 +37,7 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-              cd /home/${USER_NAME}/code/ss-corpse-chat-server &&
+              cd /home/${{secrets.USER_NAME}}/code/ss-corpse-chat-server &&
               git fetch --all &&
               git checkout master &&
               git pull origin master &&
