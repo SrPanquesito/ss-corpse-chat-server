@@ -4,8 +4,8 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/github_username/repo_name">
-    <img src="src/assets/images/logo.png" alt="Logo" width="80" height="80">
+  <a href="https://corpsechat.com/src/assets/images/logo.png">
+    <img src="https://corpsechat.com/src/assets/images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Corpse Chat Server</h3>
@@ -15,7 +15,7 @@
     <br />
     Version: Monolithic Alpha.
     <br /><br />
-    <a href="https://github.com/github_username/repo_name">View Demo</a>
+    <a href="https://corpsechat.com">View Demo</a>
   </p>
 </div>
 
