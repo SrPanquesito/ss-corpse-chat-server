@@ -69,6 +69,7 @@ describe('src/controllers/chat.controller.js', () => {
             delete mappedUser.password
             delete mappedUser.toJSON
             delete mappedUser.token
+            delete mappedUser.email
             mappedUserResponse = {
                 ...mappedUser,
                 lastMessage: { ...dummyMessage },
@@ -126,6 +127,7 @@ describe('src/controllers/chat.controller.js', () => {
     describe('getUserById', () => {
         beforeEach(() => {
             mappedUser = { ...dummyUsers[0] }
+            delete mappedUser.email
             mappedUserResponse = {
                 ...mappedUser,
                 lastMessage: { ...dummyMessage },
