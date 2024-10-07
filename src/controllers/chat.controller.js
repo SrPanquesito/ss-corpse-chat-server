@@ -160,11 +160,15 @@ const createMessage = async (req, res, next) => {
 
         await createdMessage.save()
 
+        // Send back the original message text
+        let createdMessageJson = createdMessage.toJSON()
+        createdMessageJson.text = message
+
         res.status(201).json({
             success: true,
             errorMessage: null,
             data: {
-                message: createdMessage.toJSON(),
+                message: createdMessageJson,
             },
         })
     } catch (error) {

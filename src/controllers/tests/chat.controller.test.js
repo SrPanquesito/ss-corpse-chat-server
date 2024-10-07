@@ -175,6 +175,12 @@ describe('src/controllers/chat.controller.js', () => {
     describe('createMessage', () => {
         beforeEach(() => {
             req = dummyRequest
+            Messages.mockImplementation(() => {
+                return {
+                    save: jest.fn().mockResolvedValue(dummyMessage),
+                    toJSON: jest.fn().mockReturnValue(dummyMessage),
+                }
+            })
         })
 
         afterEach(() => {
