@@ -45,7 +45,6 @@ const getAllUsersRaw = async (req, res, next) => {
             mappedUsersSet.add({
                 id: userJson.id,
                 username: userJson.username,
-                email: userJson.email,
                 profilePictureUrl: userJson.profilePictureUrl,
                 profilePictureThumbnailUrl: userJson.profilePictureThumbnailUrl,
                 status: userJson.status,
@@ -101,6 +100,7 @@ const getUserById = async (req, res, next) => {
         }
 
         const userJson = user.toJSON()
+        delete userJson.email // Remove email from response for security reasons
 
         const lastMessage = await getLastMessage(loggedUserId, userJson.id)
         if (lastMessage) {
