@@ -39,6 +39,8 @@ jobs:
             "MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }}"
             "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}"
             "MYSQL_DBNAME=${{ secrets.MYSQL_DBNAME }}"
+            "CYPHER_KEY=${{ secrets.CYPHER_KEY }}"
+            "CYPHER_IV=${{ secrets.CYPHER_IV }}"
             ALLOW_LIST=["https://corpsechat.com","https://www.corpsechat.com"]
       -
         name: Pull & Deploy
