@@ -20,6 +20,8 @@ RUN --mount=type=secret,id=PORT \
     --mount=type=secret,id=MYSQL_USERNAME \
     --mount=type=secret,id=MYSQL_PASSWORD \
     --mount=type=secret,id=MYSQL_DBNAME \
+    --mount=type=secret,id=CYPHER_KEY \
+    --mount=type=secret,id=CYPHER_IV \
     --mount=type=secret,id=ALLOW_LIST \
     sh -c 'echo "PORT=$(cat /run/secrets/PORT)" >> .env && \
             echo "JWT_SECRET=$(cat /run/secrets/JWT_SECRET)" >> .env && \
@@ -32,6 +34,8 @@ RUN --mount=type=secret,id=PORT \
             echo "MYSQL_USERNAME=$(cat /run/secrets/MYSQL_USERNAME)" >> .env && \
             echo "MYSQL_PASSWORD=$(cat /run/secrets/MYSQL_PASSWORD)" >> .env && \
             echo "MYSQL_DBNAME=$(cat /run/secrets/MYSQL_DBNAME)" >> .env && \
+            echo "CYPHER_KEY=$(cat /run/secrets/CYPHER_KEY)" >> .env && \
+            echo "CYPHER_IV=$(cat /run/secrets/CYPHER_IV)" >> .env && \
             echo "ALLOW_LIST=$(cat /run/secrets/ALLOW_LIST)" >> .env'
 
 EXPOSE 8080
